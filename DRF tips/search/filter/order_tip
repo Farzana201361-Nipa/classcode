@@ -1,0 +1,28 @@
+#Scenario: Building an API for library system where user should able to filter books by author, search by title and order by publishdate or price.
+
+
+#filters.py
+import django_filters.rest_framework as filters
+
+class BookFilter(filters.FilterSet):
+    author = filters.CharFilter(field_name= 'author_name', lookup_expr ='icontians')
+    
+    class Meta:
+        model = Book
+        fields = ['author', 'published_date']
+
+
+
+
+
+#viewset.py
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import BookFilter
+
+class BookViewSet(viewset.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = BookFilter
+    search_fields = ['title', 'author_name']
+    ordering_fields = ['publish_date','price']
